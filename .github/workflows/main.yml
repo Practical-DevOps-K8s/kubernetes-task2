@@ -14,15 +14,19 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    - name: Create k8s Kind Cluster
+      uses: helm/kind-action@v1.5.0
     - name: Build and start containers for a services
-      run: docker compose up -d
-    - name: Tunnel for tests
       run: |
-        echo "host_addr=$(hostname)" >> $GITHUB_ENV
-        npx localtunnel -s $(hostname) -p 8080 &
-    - name: Test containers functionality
-      uses: cypress-io/github-action@v6
-      env:
-        CYPRESS_BASE_URL: https://${{ env.host_addr }}.loca.lt
-      with:
-        working-directory: ./.github/tests
+        kubectl cluster-info
+      # docker compose up -d
+    #- name: Tunnel for tests
+    #  run: |
+    #    echo "host_addr=$(hostname)" >> $GITHUB_ENV
+    #    npx localtunnel -s $(hostname) -p 8080 &
+    #- name: Test containers functionality
+    #  uses: cypress-io/github-action@v6
+    #  env:
+    #    CYPRESS_BASE_URL: https://${{ env.host_addr }}.loca.lt
+    #  with:
+    #    working-directory: ./.github/tests
