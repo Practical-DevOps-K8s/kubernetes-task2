@@ -1,0 +1,28 @@
+name: Docker Task
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+
+  build:
+  
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build and start containers for a services
+      run: docker compose up -d
+    - name: Tunnel for tests
+      run: |
+        echo "host_addr=$(hostname)" >> $GITHUB_ENV
+        npx localtunnel -s $(hostname) -p 8080 &
+    - name: Test containers functionality
+      uses: cypress-io/github-action@v6
+      env:
+        CYPRESS_BASE_URL: https://${{ env.host_addr }}.loca.lt
+      with:
+        working-directory: ./.github/tests

@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  webapp:
+    build: .
+    ports:
+    - 8080:3000
+    links:
+    - db
+    environment:
+      RAILS_MASTER_KEY: 47800c6168b491b3cd9c060f229fa472
+      DATABASE_URL: mysql2://app_user:app_pass@db/app_db?encoding=utf8mb4&collation=utf8mb4_unicode_ci
+    depends_on:
+      db:
+        condition: service_healthy
+  db:
+    image: mariadb
+    environment:
+      MARIADB_ROOT_PASSWORD: example
+      MARIADB_USER: app_user
+      MARIADB_PASSWORD: app_pass
+      MARIADB_DATABASE: app_db
+    volumes:
+    - ./datadir:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "test -d /var/lib/mysql/$$MARIADB_DATABASE"]
+      timeout: 5s
