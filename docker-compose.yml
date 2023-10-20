@@ -9,19 +9,18 @@ services:
     - db
     environment:
       RAILS_MASTER_KEY: 47800c6168b491b3cd9c060f229fa472
-      DATABASE_URL: mysql2://app_user:app_pass@db/app_db?encoding=utf8mb4&collation=utf8mb4_unicode_ci
+      DATABASE_URL: postgres://app_user:app_pass/app_db
     depends_on:
       db:
         condition: service_healthy
   db:
-    image: mariadb
+    image: postgres
     environment:
-      MARIADB_ROOT_PASSWORD: example
-      MARIADB_USER: app_user
-      MARIADB_PASSWORD: app_pass
-      MARIADB_DATABASE: app_db
+      POSTGRES_USER: app_user
+      POSTGRES_PASSWORD: app_pass
+      POSTGRES_DB: app_db
     volumes:
-    - ./datadir:/var/lib/mysql
+    - ./datadir:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "test -d /var/lib/mysql/$$MARIADB_DATABASE"]
+      test: ["CMD-SHELL", "test -d /var/lib/postgresql/data/$$POSTGRES_DB"]
       timeout: 5s
