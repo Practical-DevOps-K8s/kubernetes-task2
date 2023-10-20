@@ -4,7 +4,7 @@ class DataController < ApplicationController
   # GET /data or /data.json
   def index
     @data = Datum.all
-    @version = ActiveRecord::Base.connection.execute("SELECT @@version;").first
+    @version = ActiveRecord::Base.connection.execute("SELECT version();").first
   end
 
   # GET /data/1 or /data/1.json
